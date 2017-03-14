@@ -14,6 +14,7 @@ namespace Envmap
         private static readonly Dictionary<string, EnvironmentVariableTarget> Targets;
         private static readonly Dictionary<string,
             Func<string, EnvironmentVariableTarget, EnvironmentVariableEditor>> Editors;
+        private static readonly Func<string, EnvironmentVariableTarget, EnvironmentVariableEditor> DefaultEditor;
 
         static CommandBuilder()
         {
@@ -27,6 +28,7 @@ namespace Envmap
             {
                 ["path"] = (n, t) => new PathEnvironmentVariableEditor(n, t)
             };
+            DefaultEditor = (n, t) => new PathEnvironmentVariableEditor(n, t);
 
             Actions = new Dictionary<string, Action<EnvironmentVariableEditor, string>>(Comparer)
             {
@@ -89,7 +91,7 @@ namespace Envmap
             var tar = this.target;
             return () =>
             {
-                var e = (Editors.TryGetValue(nam, out var k) ? k : (n, t) => new EnvironmentVariableEditor(n, t))(nam, tar);
+                var e = (Editors.TryGetValue(nam, out var k) ? k : DefaultEditor)(nam, tar);
                 e.LoadFromTarget();
                 Actions[cmd](e, e.CheckArgument(val));
                 e.SaveToTarget();
