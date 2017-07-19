@@ -20,12 +20,17 @@ namespace Envmap
 
         public void Show(IOutputer outputer)
         {
-            outputer.WriteLine(OutputLevel.Normal, this._originValue);
+            outputer.WriteLine(OutputLevel.Normal, this.ToString());
         }
 
         public void Set(string value)
         {
             Environment.SetEnvironmentVariable(this._name, value, this._target);
+        }
+
+        public override string ToString()
+        {
+            return base.ToString();
         }
     }
 }

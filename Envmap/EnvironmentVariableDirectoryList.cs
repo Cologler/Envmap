@@ -6,7 +6,6 @@ using Jasily.Frameworks.Cli.IO;
 
 namespace Envmap
 {
-    [CommandClass(IsNotResult = true)]
     class EnvironmentVariableDirectoryList : EnvironmentVariableList
     {
         public EnvironmentVariableDirectoryList(string name, EnvironmentVariableTarget target, string originValue) 
@@ -14,15 +13,15 @@ namespace Envmap
         {
         }
 
-        public override void Add(string dirPath)
+        public override void Add(string dirPath, IOutputer outputer)
         {
             if (!Directory.Exists(dirPath)) throw new InvalidOperationException($"invalid directory: <\"{dirPath}\">.");
-            base.Add(Path.GetFullPath(dirPath));
+            base.Add(Path.GetFullPath(dirPath), outputer);
         }
 
-        public override void Remove(string dirPath)
+        public override void Remove(string dirPath, IOutputer outputer)
         {
-            base.Remove(Path.GetFullPath(dirPath));
+            base.Remove(Path.GetFullPath(dirPath), outputer);
         }
 
         public void Map(string dirPath, IOutputer outputer)

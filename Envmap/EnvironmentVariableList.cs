@@ -87,41 +87,46 @@ namespace Envmap
         }
 
         [CommandMethod]
-        public void Show(IOutputer outputer)
+        public void List(IOutputer outputer)
         {
-            foreach (var path in this.Paths)
-            {
-                outputer.WriteLine(OutputLevel.Normal, path);
-            }
+            outputer.WriteLine(OutputLevel.Normal, this.ToString());
         }
 
         [CommandMethod]
-        public void Sort()
+        public void Sort(IOutputer outputer)
         {
             this.Paths.Sort();
             this.Save();
+            outputer.WriteLine(OutputLevel.Normal, $"Sorted {this._target} envvar <{this._name}>.");
         }
 
-        public virtual void Add(string value)
+        public virtual void Add(string value, IOutputer outputer)
         {
             var exists = this.Paths.FirstOrDefault(z => Comparer.Equals(z, value));
             if (exists != null) throw new InvalidOperationException($"exists value: <{exists}>");
             this.Paths.Add(value);
             this.Save();
+            outputer.WriteLine(OutputLevel.Normal, $"Added <{value}> into {this._target} envvar <{this._name}>.");
         }
 
-        public virtual void Remove(string value)
+        public virtual void Remove(string value, IOutputer outputer)
         {
             var exists = this.Paths.FirstOrDefault(z => Comparer.Equals(z, value));
             if (exists == null) throw new InvalidOperationException($"value not exists: <{value}>");
             this.Paths.Remove(exists);
             this.Save();
+            outputer.WriteLine(OutputLevel.Normal, $"Removed <{value}> from {this._target} envvar <{this._name}>.");
         }
 
         protected void Save()
         {
             var val = ToStringValue(this.Paths);
             Environment.SetEnvironmentVariable(this._name, val, this._target);
+        }
+
+        public override string ToString()
+        {
+            return string.Join("\r\n", this.Paths);
         }
     }
 }
